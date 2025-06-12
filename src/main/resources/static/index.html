@@ -34,14 +34,14 @@
   const errorDiv = document.getElementById("error");
   const outputDiv = document.getElementById("output");
 
-  // ❌ Reject empty or multi-word input
+  // Reject empty or multi-word input
   if (name === "" || name.includes(" ")) {
     errorDiv.innerText = "Please enter a valid single name (no spaces allowed).";
     outputDiv.innerHTML = "";
     return;
   }
 
-  // ✅ Valid input
+  // Validate input
   errorDiv.innerText = "";
 
   // Update URL
