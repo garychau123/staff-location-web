@@ -38,7 +38,7 @@ public class StaffLocationWebApplication {
             StaffDetails staff = staffList[i];
             output.append("o Name: ").append(staff.getName()).append("<br>");
             output.append("o Employee ID: ").append(staff.getEmployeeId()).append("<br>");
-            output.append("o Location: ").append(staff.getOfficeLocation()).append("<br>");
+            output.append("o Location: ").append(staff.getOfficeLocation()).append("<br><br>");
             output.append("o Phone: ").append(staff.getOfficePhone()).append("<br><br>");
         }
 
