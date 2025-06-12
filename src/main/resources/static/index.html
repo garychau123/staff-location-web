@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Staff Location Web</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    input, button {
+      padding: 8px;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <h1>Staff Location Search</h1>
+  <input type="text" id="firstName" placeholder="Enter first name">
+  <button onclick="search()">Search</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    function search() {
+      const name = document.getElementById("firstName").value;
+      fetch(`http://localhost:8082/staff-details-web/${name}`)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("output").innerHTML = data;
+        })
+        .catch(err => {
+          document.getElementById("output").innerHTML = "<p style='color:red;'>Error fetching data.</p>";
+        });
+    }
+  </script>
+</body>
+</html>

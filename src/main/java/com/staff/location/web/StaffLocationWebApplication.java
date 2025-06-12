@@ -16,10 +16,10 @@ public class StaffLocationWebApplication {
         SpringApplication.run(StaffLocationWebApplication.class, args);
     }
 
-    @RequestMapping("/")
-    public String home() {
-        return "Staff Location Web";
-    }
+    // @RequestMapping("/")
+    // public String home() {
+    //     return "Staff Location Web";
+    // }
 
     @GetMapping("/staff-details-web/{firstName}")
     public ResponseEntity<String> getFormattedStaffDetails(@PathVariable String firstName) {
