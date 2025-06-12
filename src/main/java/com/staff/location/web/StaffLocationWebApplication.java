@@ -3,10 +3,11 @@ package com.staff.location.web;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;   
-
-import java.util.List;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 
 @SpringBootApplication
 @RestController
@@ -16,33 +17,41 @@ public class StaffLocationWebApplication {
         SpringApplication.run(StaffLocationWebApplication.class, args);
     }
 
-    // @RequestMapping("/")
-    // public String home() {
-    //     return "Staff Location Web";
-    // }
-
     @GetMapping("/staff-details-web/{firstName}")
     public ResponseEntity<String> getFormattedStaffDetails(@PathVariable String firstName) {
-        // 👇 Call the staff-location-api (not employee-service)
         String url = "http://localhost:8081/staff-details/" + firstName;
 
         RestClient restClient = RestClient.create();
-        StaffDetails[] staffList = restClient.get()
-                .uri(url)
-                .retrieve()
-                .body(StaffDetails[].class);
 
-        StringBuilder output = new StringBuilder();
+        try {
+            // Call the Staff Location API
+            StaffDetails[] staffList = restClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .body(StaffDetails[].class);
 
-        for (int i = 0; i < staffList.length; i++) {
-            StaffDetails staff = staffList[i];
-            output.append("o Name: ").append(staff.getName()).append("<br>");
-            output.append("o Employee ID: ").append(staff.getEmployeeId()).append("<br>");
-            output.append("o Location: ").append(staff.getOfficeLocation()).append("<br>");
-            output.append("o Phone: ").append(staff.getOfficePhone()).append("<br><br>");
+            // Format response
+            StringBuilder output = new StringBuilder();
+            for (StaffDetails staff : staffList) {
+                output.append("o Name: ").append(staff.getName()).append("<br>");
+                output.append("o Employee ID: ").append(staff.getEmployeeId()).append("<br>");
+                output.append("o Location: ").append(staff.getOfficeLocation()).append("<br>");
+                output.append("o Phone: ").append(staff.getOfficePhone()).append("<br><br>");
+            }
+
+            return ResponseEntity.ok(output.toString());
+
+        } catch (HttpClientErrorException e) {
+            // Forward exact JSON error from staff-location-api
+            return ResponseEntity.status(e.getStatusCode())
+                    .header("Content-Type", "application/json")
+                    .body(e.getResponseBodyAsString());
+
+        } catch (RestClientException e) {
+            // Catch unexpected issues like connection errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header("Content-Type", "application/json")
+                    .body("{\"error\":\"Something went wrong contacting staff-location-api\"}");
         }
-
-        return ResponseEntity.ok(output.toString());
     }
 }
-

@@ -28,6 +28,8 @@
   <script>
     function search() {
       const name = document.getElementById("firstName").value;
+      window.history.pushState({}, '', `?name=${encodeURIComponent(name)}`);
+
       fetch(`http://localhost:8082/staff-details-web/${name}`)
         .then(response => response.text())
         .then(data => {
