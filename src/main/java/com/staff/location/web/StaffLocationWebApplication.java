@@ -30,6 +30,11 @@ public class StaffLocationWebApplication {
                     .retrieve()
                     .body(StaffDetails[].class);
 
+            // Check if empty
+            if (staffList.length == 0) {
+                return ResponseEntity.ok("No staff found");
+            }
+
             // Format response
             StringBuilder output = new StringBuilder();
             for (StaffDetails staff : staffList) {
@@ -43,9 +48,14 @@ public class StaffLocationWebApplication {
 
         } catch (HttpClientErrorException e) {
             // Forward exact JSON error from staff-location-api
+            String responseBody = e.getResponseBodyAsString();
+            if (responseBody != null && responseBody.contains("invalid characters")) {
+                // Show plain error message if invalid characters
+                return ResponseEntity.ok("Error: invalid characters");
+            }
             return ResponseEntity.status(e.getStatusCode())
                     .header("Content-Type", "application/json")
-                    .body(e.getResponseBodyAsString());
+                    .body(responseBody);
 
         } catch (RestClientException e) {
             // Catch unexpected issues like connection errors
